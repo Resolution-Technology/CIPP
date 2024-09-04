@@ -32,7 +32,7 @@ const DeployJITAdmin = () => {
   const [ExecuteGetRequest, getResults] = useLazyGenericGetRequestQuery()
   const currentDate = new Date()
   const [startDate, setStartDate] = useState(currentDate)
-  const [endDate, setEndDate] = useState(currentDate)
+  const [endDate, setEndDate] = useState(new Date(currentDate.setHours(currentDate.getHours() + 4)));
 
   const tenantDomain = useSelector((state) => state.app.currentTenant.defaultDomainName)
   const [refreshState, setRefreshState] = useState(false)
@@ -42,7 +42,12 @@ const DeployJITAdmin = () => {
     isFetching: domainsIsFetching,
     error: domainsError,
   } = useListDomainsQuery({ tenantDomain })
-
+  
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    setEndDate(new Date(date.setHours(date.getHours() + 4)));
+  };
+  
   const onSubmit = (values) => {
     const startTime = Math.floor(startDate.getTime() / 1000)
     const endTime = Math.floor(endDate.getTime() / 1000)
@@ -128,6 +133,7 @@ const DeployJITAdmin = () => {
                             validate={false}
                             inline={true}
                             className=""
+                            defaultValue="create"
                           />
                         </CCol>
                       </CRow>
@@ -222,7 +228,7 @@ const DeployJITAdmin = () => {
                             timeFormat="HH:mm"
                             timeIntervals={15}
                             dateFormat="Pp"
-                            onChange={(date) => setStartDate(date)}
+                            onChange={handleStartDateChange}
                           />
                         </CCol>
                         <CCol>
@@ -249,6 +255,7 @@ const DeployJITAdmin = () => {
                             ]}
                             placeholder="Select action for when JIT expires"
                             name="expireAction"
+                            defaultValue="DeleteUser"
                           />
                         </CCol>
                       </CRow>
